@@ -19,6 +19,7 @@ public class FrmLogin extends javax.swing.JFrame {
      */
     public FrmLogin() {
         initComponents();
+        this.setLocationRelativeTo(this);
 
     }
 
@@ -173,7 +174,6 @@ public class FrmLogin extends javax.swing.JFrame {
         conexion.close();
 
     }//GEN-LAST:event_PnlBtnIniciarMouseClicked
-    
 
     /**
      * @param args the command line arguments

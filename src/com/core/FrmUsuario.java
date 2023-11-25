@@ -84,18 +84,18 @@ public class FrmUsuario extends javax.swing.JFrame {
 
         tablaPrincipal.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "id", "Nombre", "apellido", "edad", "tipo de usuario"
+                "id", "Nombre", "apellido", "edad"
             }
         ));
         jScrollPane1.setViewportView(tablaPrincipal);
@@ -103,6 +103,11 @@ public class FrmUsuario extends javax.swing.JFrame {
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 180, 510, 250));
 
         jButton1.setText("Editar/Agregar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 180, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -118,6 +123,14 @@ public class FrmUsuario extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        FrmEdicionUsuarios edicionUsuarios= new FrmEdicionUsuarios();
+        edicionUsuarios.setVisible(true);
+        this.dispose();
+
+
+    }//GEN-LAST:event_jButton1ActionPerformed
  // Método para mostrar datos en la tabla
 
     

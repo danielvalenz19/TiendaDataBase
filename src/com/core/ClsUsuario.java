@@ -29,17 +29,18 @@ public class ClsUsuario {
             Conexion conexion = new Conexion();
             Connection cn = conexion.getConnection();
 
-            String query = "SELECT UserID, Nombre, Apellido, Edad, Usuario FROM usuarios";
+            String query = "SELECT UserID, Nombre, Apellido, Edad, Contraseña, Usuario FROM usuarios";
             try (PreparedStatement pst = cn.prepareStatement(query); ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
                     int userID = rs.getInt("UserID");
                     String nombre = rs.getString("Nombre");
                     String apellido = rs.getString("Apellido");
                     int edad = rs.getInt("Edad");
+                    String contraseña = rs.getString("Contraseña");
                     String usuario = rs.getString("Usuario");
 
                     // Agrega una nueva fila a la tabla con los datos obtenidos de la base de datos
-                    modelo.addRow(new Object[]{userID, nombre, apellido, edad, usuario});
+                    modelo.addRow(new Object[]{userID, nombre, apellido, edad, contraseña, usuario});
                 }
             }
 
@@ -51,5 +52,4 @@ public class ClsUsuario {
     }
 
     // Método para guardar datos en la tabla
- 
 }

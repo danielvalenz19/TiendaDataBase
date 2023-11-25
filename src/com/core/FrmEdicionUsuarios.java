@@ -5,6 +5,8 @@
 package com.core;
 
 import com.conexion.Conexion;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -36,6 +38,71 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
                 llenarCamposDesdeTabla(filaSeleccionada, txtId, txtNombre, txtApellido, txtEdad, txtContraseña, cmbUsuario);
             }
         });
+
+        // Configurar un MouseListener para la tabla para manejar la selección de filas
+        tablaPrincipal.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int filaSeleccionada = tablaPrincipal.getSelectedRow();
+                llenarCamposDesdeTabla(filaSeleccionada, txtId, txtNombre, txtApellido, txtEdad, txtContraseña, cmbUsuario);
+            }
+        });
+
+        // Configurar un ActionListener para el botón de eliminar
+        btnEliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eliminarFilaSeleccionada();
+            }
+        });
+    }
+// Método para eliminar la fila seleccionada de la base de datos
+
+    private void eliminarFilaSeleccionada() {
+        int filaSeleccionada = tablaPrincipal.getSelectedRow();
+
+        // Asegurarse de que se haya seleccionado una fila
+        if (filaSeleccionada >= 0) {
+            int confirmacion = JOptionPane.showConfirmDialog(null, "¿Estás seguro de eliminar este registro?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                try {
+                    Conexion conexion = new Conexion();
+                    Connection cn = conexion.getConnection();
+
+                    // Obtener el ID de la fila seleccionada
+                    int userID = Integer.parseInt(tablaPrincipal.getValueAt(filaSeleccionada, 0).toString());
+
+                    // Consulta SQL para eliminar un usuario en la tabla
+                    String query = "DELETE FROM usuarios WHERE UserID=?";
+                    try (PreparedStatement pst = cn.prepareStatement(query)) {
+                        // Configurar el parámetro del PreparedStatement con el ID de la fila seleccionada
+                        pst.setInt(1, userID);
+
+                        // Ejecutar la consulta de eliminación
+                        int filasAfectadas = pst.executeUpdate();
+
+                        if (filasAfectadas > 0) {
+                            JOptionPane.showMessageDialog(null, "Registro eliminado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                            // Actualizar la tabla después de la eliminación
+                            ClsUsuario clsUsuario = new ClsUsuario();
+                            clsUsuario.mostrarDatosEnTabla(tablaPrincipal);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo eliminar el registro", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+
+                    // Cierra la conexión después de usarla
+                    conexion.close();
+                } catch (SQLException | NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error al eliminar registro", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Por favor, selecciona una fila para eliminar", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
@@ -51,6 +118,7 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -67,6 +135,7 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
         cmbUsuario = new javax.swing.JComboBox<>();
         btnGuardar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,11 +147,11 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 150, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 660, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 150, 660));
@@ -92,6 +161,13 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         jLabel1.setText("Edicion/Usuarios");
 
+        jButton1.setText("Regresar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -99,14 +175,20 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addComponent(jLabel1)
-                .addContainerGap(373, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(30, 30, 30))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(42, 42, 42)
+                .addGap(20, 20, 20)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 0, 670, -1));
@@ -136,13 +218,13 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
 
         tablaPrincipal.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "id", "Nombre", "apellido", "edad", "tipo de usuario"
+                "id", "Nombre", "apellido", "edad", "tipo de usuario", "Title 6"
             }
         ));
         tablaPrincipal.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -173,6 +255,14 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
         });
         jPanel1.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 190, -1, -1));
 
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 120, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -200,7 +290,8 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_btnActualizarActionPerformed
-    // Método para actualizar datos en la tabla
+    // Método para llenar campos de texto desde la tabla al seleccionar una fila
+
     private void llenarCamposDesdeTabla(int filaSeleccionada, JTextField txtId, JTextField txtNombre,
             JTextField txtApellido, JTextField txtEdad, JTextField txtContraseña, JComboBox<String> cmbUsuario) {
 
@@ -214,8 +305,15 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
             txtNombre.setText(modelo.getValueAt(filaSeleccionada, 1).toString());
             txtApellido.setText(modelo.getValueAt(filaSeleccionada, 2).toString());
             txtEdad.setText(modelo.getValueAt(filaSeleccionada, 3).toString());
-            txtContraseña.setText(modelo.getValueAt(filaSeleccionada, 4).toString());
-            cmbUsuario.setSelectedItem(modelo.getValueAt(filaSeleccionada, 5).toString());
+
+            // Ajusta el campo de la contraseña y el combobox
+            // Aquí asumimos que la contraseña está en la posición 4 y el tipo de usuario en la posición 5
+            // Debes ajustar esto según la estructura real de tu base de datos
+            String contraseña = modelo.getValueAt(filaSeleccionada, 4).toString();
+            txtContraseña.setText(contraseña);
+
+            String tipoUsuario = modelo.getValueAt(filaSeleccionada, 5).toString();
+            cmbUsuario.setSelectedItem(tipoUsuario);
         }
     }
 
@@ -259,6 +357,18 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
     private void tablaPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPrincipalMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tablaPrincipalMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        FrmPrincipal frmPrincipal = new FrmPrincipal();
+        frmPrincipal.setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void limpiar() {
         txtId.setText("");
@@ -341,8 +451,10 @@ public class FrmEdicionUsuarios extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JComboBox<String> cmbUsuario;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
